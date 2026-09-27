@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 const Board = () => {
   const [board, setboard] = useState<number[][]>(() =>
     Array.from({ length: 6 }, () => Array(7).fill(0)),
@@ -15,46 +15,60 @@ const Board = () => {
     }
   };
 
-  const CheckifWin = (row: number, col: number) => {
+  const CheckifWin = (row: number, col: number, newBoard: number[][], player: boolean) => {
     let count = 0;
+    let currentplayer = player ? 1: 2
     //vertical
-    // row 5 col 4
     for (let i = 5; i >= 0; i--) {
-      let player = currentplayer ? 1 : 2;
-      if (board[i][col] == player) {
-        console.log("board is", board[i][col]);
-        console.log("count is:", count);
+      console.log(row)
+      if (newBoard[i][col] == currentplayer) {
         count++;
         if (count == 4) {
-          console.log(player, "player win");
-          return;
+          console.log(currentplayer, "player win");
+          return true;
         }
       } else {
         count = 0;
       }
     }
-  };
+    //horizontal
+    for (let i = 0; i <= 6; i++) {
+      if(newBoard[row][i] == currentplayer){
+        count++;
+        if(count == 4) {
+          console.log(currentplayer, "player win..!!")
+          return true;
+        }
+      } else {
+        count = 0;
+      }
+    }
+
+    if (newBoard[row][col] == currentplayer) {
+      
+      }
+      
+      return false;
+    };
 
   const divClicked = (cols: number) => {
     let row = CheckisValidRow(cols);
-    if (!row) {
+    if (row == undefined) {
       console.log("Column is full");
       return;
     }
     setboard((prev) => {
       let newBoard = [...prev];
       newBoard[row][cols] = currentplayer ? 1 : 2;
+      let win = CheckifWin(row, cols, newBoard, currentplayer);
+      if (win) {
+        alert("Game Over!!")
+      }
       return newBoard;
     });
 
-    
     setcurrentplayer(!currentplayer);
   };
-  
-  // useEffect(() => {
-  //   CheckifWin(row, cols);
-  // }, [board])
-  
 
   return (
     <div className="flex w-screen h-screen overflow-hidden bg-gray-400 p-4 rounded-2xl flex-col border-2 border-zinc-300">
